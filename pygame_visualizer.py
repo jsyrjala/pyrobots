@@ -2,6 +2,8 @@ from visualizer import Visualizer
 from constants import *
 from simulator import *
 
+from controllers.cylon import * 
+from controllers.tracker import * 
 import sys, pygame
 from pygame.locals import *
 
@@ -65,10 +67,11 @@ class PyGameVisualizer(Visualizer):
 if __name__ == '__main__':
     vis = PyGameVisualizer()
     
-    r1 = Robot([1000,500], 'R1')
-    r2 = Robot([5000,1000], 'R2')
-    pl1 = Player(r1, Shooter() )
-    pl2 = Player(r2, Driver() )
-    print str(pl2)
+    r1 = Robot([5000,5000], 'R1')
+    r2 = Robot([5000,5000], 'R2')
+    pl1 = Player(r1, Cylon() )
+    pl2 = Player(r2, Tracker() )
     sim = Simulator([pl1, pl2], vis)
+    
+    #sim = Simulator([pl2, pl2], vis)
     sim.start()

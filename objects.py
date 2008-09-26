@@ -115,7 +115,7 @@ class Robot(Object):
         if speed > MAX_FORWARD_SPEED:
             speed = MAX_BACKWARD_SPEED
         
-        direction = direction % 360
+        direction = int(direction + 0.5) % 360
         self.target_speed = speed
         self.target_direction = direction
         
