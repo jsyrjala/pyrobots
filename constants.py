@@ -1,4 +1,4 @@
-from math import sqrt, pi, cos, sin, floor, radians
+from math import sqrt, pi, cos, sin, floor, radians, degrees, atan
 from random import randint
 
 ARENA_MAX_WIDTH = 10000
@@ -65,3 +65,68 @@ def round(value):
 
 def rand_int(min, max):
 	return randint(min, max)
+
+def direction(location, target):
+	"""
+	Returns direction (in float degrees) from location to target.
+	"""
+	
+	vector = [target[0] - location[0], target[1] - location[1]]
+	return direction_of_vector(vector)
+	
+def direction_of_vector(vector):
+	"""
+Returns direction (in float degrees) for a vector.
+
+>>> direction_of_vector([1,0])
+0
+>>> direction_of_vector([0,1])
+90
+>>> direction_of_vector([-1,0])
+180
+>>> direction_of_vector([0,-1])
+270
+>>> direction_of_vector([1,1])
+45.0
+>>> direction_of_vector([-1,1])
+135.0
+>>> direction_of_vector([-1,-1])
+225.0
+>>> direction_of_vector([1,-1])
+315.0
+
+	"""
+	x = vector[0]
+	y = vector[1]
+	# first accurate cardinal directions
+	if y == 0:
+		if x < 0:
+			return 180
+		else:
+			return 0
+	if x == 0:
+		if y < 0:
+			return 270
+		else:
+			return 90
+	
+	value = degrees(atan( float(y)/x ))
+	
+	if y > 0:
+		if x > 0:
+			return value
+		else:
+			return 90 - value
+	else:
+		if x > 0:
+			return 360 + value
+		else:
+			return 180 + value
+	
+
+def _test():
+    import doctest
+    doctest.testmod()
+
+if __name__ == "__main__":
+    _test()
