@@ -15,14 +15,15 @@ class Controller:
 
     def __init__(self):
         self.logger = logging.getLogger('CTRL')
-
+        self.status = None
 
     def __init_event_loop__(self, status):
         """Called by simulator. Do not use!"""
         self.logger.debug("initializing")
+        self.status = status.pop(0)
         self.execute()
-        self.logger("finished")
-        self.status = status
+        self.logger.debug("finished")
+        
         
     def __set_status__(self, results):
         self.status = results.pop(0)
@@ -74,7 +75,7 @@ class Controller:
         results = self.main_greenlet.switch( [self.WAIT] )
         return self.__set_status__(results)
 
-    def status(self):
+    def get_status(self):
         """
         Returns current status of robot
         [[x_coordinate, y_coordinate], health, speed, direction]
@@ -101,8 +102,6 @@ class Shooter(Controller):
 class Driver(Controller):
     def execute(self):
         while True:
-            print str(self.status)
-            self.drive(rand_int(0, 360), rand_int(MAX_BACKWARD_SPEED, MAX_FORWARD_SPEED))
-            self.shoot(rand_int(0,360) , rand_int(100, 5000) )
+            self.drive(0, 10)
             
-            
+            location, health, speed, direction = self.get_status()

@@ -21,7 +21,6 @@ class Simulator:
         
     def start(self):
         self.greenlet = greenlet(self.simulate)
-        print self.greenlet
         for player in self.players:
             player.greenlet = greenlet(player.controller.__init_event_loop__)
             player.controller.main_greenlet = self.greenlet
@@ -45,7 +44,7 @@ class Simulator:
             prev_results = [ player.robot.status() ]
             if self.order_results.has_key(player):
                 prev_results.append(self.order_results[player] )
-                
+
             new_order = self.get_order(player,  prev_results)
             if new_order:
                 orders[player] = new_order
@@ -105,7 +104,7 @@ class Simulator:
 
 
     def stopping(self):
-        # TODO aika katkaisu jos ei tulosta halutussa ajassa
+        # TODO kill game after N steps if no resolution before
         pass
 
 
@@ -115,6 +114,5 @@ if __name__ == '__main__':
     r2 = Robot([5000,1000], 'R2')
     pl1 = Player(r1, Shooter() )
     pl2 = Player(r2, Driver() )
-    print str(pl2)
     sim = Simulator([pl1, pl2])
     sim.start()
