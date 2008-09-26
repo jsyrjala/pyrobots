@@ -21,7 +21,7 @@ class Simulator:
         self.greenlet = greenlet(self.simulate)
         print self.greenlet
         for player in self.players:
-            player.greenlet = greenlet(player.controller.init)
+            player.greenlet = greenlet(player.controller.__init_event_loop__)
             player.controller.main_greenlet = self.greenlet
         self.greenlet.switch()
             
@@ -34,16 +34,13 @@ class Simulator:
         # orders for current timestep
         orders = {}
         # results for orders in previous timestep
-        
-        
-        time.sleep(0.05)
-    
 
         # get orders for robots
         for player in self.players:
-            prev_results = None
+            # first thing in results is robot's status
+            prev_results = [ player.robot.status() ]
             if self.order_results.has_key(player):
-                prev_results = self.order_results[player]
+                prev_results.append(self.order_results[player] )
                 
             new_order = self.get_order(player,  prev_results)
             if new_order:

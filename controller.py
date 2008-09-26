@@ -3,34 +3,93 @@ from constants import *
 
 
 class Controller:
+    """
+    Controller is a base class for robot controllers. It is designed for subclassing.
+    """
     SHOOT = 1
     SCAN  = 2
     DRIVE = 3
     WAIT  = 4
+    
+    
+
     def __init__(self):
-        pass
+        self.logger = logging.getLogger('CTRL')
+
+
+    def __init_event_loop__(self, status):
+        """Called by simulator. Do not use!"""
+        self.logger.debug("initializing")
+        self.execute()
+        self.logger("finished")
+        self.status = status
         
+    def __set_status__(self, results):
+        self.status = results.pop(0)
+        return results
+
     def shoot(self, direction, distance):
-        return self.main_greenlet.switch( [self.SHOOT, [direction, distance]] )
+        """
+        Shoots the cannon to given direction and distance.
+        There may be up to 3 cannon shells in the air at same time.
+        Return True, if shooting was succesful, false otherwise.
+        
+        direction is in degrees, distance is in pixels (integers only).
+        
+        TODO speed affects accuracy?
+        """
+        results = self.main_greenlet.switch( [self.SHOOT, [direction, distance]] )
+        return self.__set_status__(results)
 
     def scan(self, direction, spread):
-        return self.main_greenlet.switch( [self.SCAN, [direction, spread]] )
+        """
+        Scans an arc from direction-spread to direction+spread looking for other robots.
+        If robot is found within scanning arc, distance to nearest robot is returned.
+        If no robots are found, None is returned.
+        Spreads larger than MAX_SCAN_SPREAD are truncated.
+        
+        direction and spread are in degrees (integers only).
+        """
+        results = self.main_greenlet.switch( [self.SCAN, [direction, spread]] )
+        return self.__set_status__(results)
 
     def drive(self, direction, speed):
-        return self.main_greenlet.switch( [self.DRIVE, [direction, speed]] )
+        """
+        Changes direction and speed of the robot. Robot will continue moving until collision or new drive command.
+        Maximum forward speed is MAX_FORWARD_SPEED pixels/time-unit.
+        Maximum backward speed is MAX_BACKWARD_SPEED pixels/time-unit.
+        Maximum acceleration is MAX_ACCELERATION pixels/time-unit^2.
+        Maximum speed where turning is allowed is MAX_TURN_SPEED pixels/time-unit. 
+        If speed is too high for turning, robot will slow down, turn and go back to its target speed.
+        
+        direction is in degrees, speed is in pixels/time-unit (integers only).
+        """
+        results = self.main_greenlet.switch( [self.DRIVE, [direction, speed]] )
+        return self.__set_status__(results)
 
     def wait(self):
-        return self.main_greenlet.switch( [self.WAIT] )
+        """
+        Skips turn.
+        """
+        results = self.main_greenlet.switch( [self.WAIT] )
+        return self.__set_status__(results)
 
     def status(self):
-        return status
+        """
+        Returns current status of robot
+        [[x_coordinate, y_coordinate], health, speed, direction]
+        """
+        return self.status
 
-    def init(self, dummy):
-        """Called by simulator. Do not use!"""
-        self.execute()
         
     def execute(self):
-        """Entry point of controller. Override this in subclass."""
+        """
+        Entry point of controller. Override this in subclass. 
+        Do not exit from this method, since it counts as surrender ;-) 
+        Make an infinite loop and call methods provided by this class.
+        
+        Calling shoot, drive, scan or wait finishes turn for current timeslice. Calling status does not affect timeslice.
+        """
         pass
 
 
@@ -42,5 +101,8 @@ class Shooter(Controller):
 class Driver(Controller):
     def execute(self):
         while True:
+            print str(self.status)
             self.drive(rand_int(0, 360), rand_int(MAX_BACKWARD_SPEED, MAX_FORWARD_SPEED))
             self.shoot(rand_int(0,360) , rand_int(100, 5000) )
+            
+            

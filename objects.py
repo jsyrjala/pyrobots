@@ -5,11 +5,18 @@ from constants import *
 import math
 
 class Object:
+    """
+    Base class for objects
+    """
     def __init__(self, location):
         self.direction = 0
         self.location = location
+        self.radius = 0
 
     def collides_with_wall(self):
+        """
+        Returns true if current object collides with walls. Takes object's radius in consideration.
+        """
         x = location[0]
         if x < self.radius or x > (ARENA_MAX_WIDTH - self.radius):
             return True
@@ -20,6 +27,9 @@ class Object:
 
 
     def distance_to(self, location):
+        """
+        Returns distance to location.
+        """
         x_diff = (self.location[0] - location[0])
         y_diff = (self.location[1] - location[1])
         return sqrt(x_diff * x_diff + y_diff * y_diff)
@@ -28,17 +38,17 @@ class Object:
         return self.distance_to(object.location) < (self.radius + object.radius)
 
     def move(self):
-        """Moves object. Returns true if target found"""
+        """Moves object."""
         if self.speed == 0:
-            return False
+            return
         self.location = vector(self.location, self.direction, self.speed)
         self.logger.debug("Move to " + str(self.location) )
-        return False
-
-
 
 
 class Shell(Object):
+    """
+    Class for cannon shells.
+    """
     def __init__(self, shooter, location, direction, target ):
         Object.__init__(self,location)
         self.logger = logging.getLogger('SHELL')
@@ -50,6 +60,9 @@ class Shell(Object):
         self.shooter = shooter
 
     def move(self):
+        """
+        Moves bullet. Returns true when the shell hit the ground.
+        """
         if self.distance_to(self.target) < self.speed:
             self.location = self.target
             return True
@@ -57,6 +70,9 @@ class Shell(Object):
         return False
 
     def explode(self):
+        """
+        Called when shell explodes.
+        """
         self.shooter.shells_in_air -= 1
 
 class Robot(Object):
@@ -82,7 +98,7 @@ class Robot(Object):
         return self.shells_in_air <= MAX_SHELLS_IN_AIR
 
     def can_turn(self):
-        """Returns true if robot can turn at current speed"""
+        """Returns true if robot can turn at current speed."""
         return math.fabs(self.speed) <= MAX_TURN_SPEED
 
     def shoot(self, direction, distance):
@@ -91,6 +107,9 @@ class Robot(Object):
         return Shell(self, [self.location[0], self.location[1]], direction, target)
 
     def drive(self, direction, speed):
+        """
+        Sets target values for robot's drive. Note changes in speed and direction are not instantenous, but they take some time.
+        """
         if speed < MAX_BACKWARD_SPEED:
             speed = MAX_BACKWARD_SPEED
         if speed > MAX_FORWARD_SPEED:
@@ -112,6 +131,8 @@ class Robot(Object):
             # TODO turn at no more than MAX_DIRECTION_CHANGE degrees
             direction_changed = True
             pass
+            
+        # TODO if going too fast for turning, brake until turning is allowed, turn and go back to target speed.
         return direction_changed
         
     def move(self):
@@ -128,6 +149,13 @@ class Robot(Object):
         # TODO accelerate/brake no more than MAX_ACCELERATION
         self.speed = self.target_speed
         Object.move(self)
+    
+    def status(self):
+        """
+        Returns robots status.
+        [[x_coordinate, y_coordinate], health, speed, direction]
+        """
+        return [[self.location[0], self.location[1]], self.health, self.speed, self.direction]
         
 if __name__ == '__main__':
     r = Robot([1000,1000], 'doo')
