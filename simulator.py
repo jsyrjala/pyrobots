@@ -2,6 +2,7 @@ from constants import *
 from objects import *
 from controller import *
 from greenlet import greenlet
+from pygame_visualizer import *
 import time
 class Player:
     def __init__(self, robot, controller):
@@ -9,13 +10,14 @@ class Player:
         self.controller = controller
 
 class Simulator:
-    def __init__(self, players):
+    def __init__(self, players, visualizer = None):
         """Initialized Simulator"""
         self.players = players
         self.shells = []
         self.logger = logging.getLogger('SIMULATOR')
         self.logger.info("initialized")
         self.order_results = {}
+        self.visualizer = visualizer
         
     def start(self):
         self.greenlet = greenlet(self.simulate)
@@ -34,7 +36,9 @@ class Simulator:
         # orders for current timestep
         orders = {}
         # results for orders in previous timestep
-
+        if self.visualizer:
+            self.visualizer.visualize(self)
+            
         # get orders for robots
         for player in self.players:
             # first thing in results is robot's status
@@ -106,6 +110,7 @@ class Simulator:
 
 
 if __name__ == '__main__':
+    
     r1 = Robot([1000,500], 'R1')
     r2 = Robot([5000,1000], 'R2')
     pl1 = Player(r1, Shooter() )
