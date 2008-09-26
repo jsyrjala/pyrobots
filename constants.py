@@ -63,8 +63,5 @@ def vector(base_location, direction, distance):
 def round(value):
 	return int(value + 0.5)
 
-#def degrees_to_radians(degrees):
-#	return degrees/180.0*pi
-
 def rand_int(min, max):
 	return randint(min, max)
