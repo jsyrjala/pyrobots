@@ -51,13 +51,13 @@ BLAST_DAMAGE = ((BLAST_MAX_DAMAGE_RADIUS, BLAST_MAX_DAMAGE),
 				(BLAST_MIN_DAMAGE_RADIUS, BLAST_MIN_DAMAGE))
 
 import logging
-logging.basicConfig(level=logging.DEBUG,
+logging.basicConfig(level=logging.INFO,
 					format='%(levelname)-8s %(name)-6s: %(message)s')
 
 def vector(base_location, direction, distance):
 	rads = radians(direction)
-	x_diff = sin(rads) * distance
-	y_diff = cos(rads) * distance
+	x_diff = cos(rads) * distance
+	y_diff = sin(rads) * distance
 	return [ round(base_location[0] + x_diff), round(base_location[1] + y_diff) ]
 
 def round(value):
