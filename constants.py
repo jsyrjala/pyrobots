@@ -1,4 +1,4 @@
-from math import sqrt, pi, cos, sin, floor, radians, degrees, atan, fabs
+from math import sqrt, pi, cos, sin, floor, radians, degrees, atan, atan2, fabs
 from random import randint
 
 ARENA_MAX_WIDTH = 10000
@@ -15,17 +15,19 @@ MAX_CANNON_RANGE = 7000
 # speed change per time unit^2
 MAX_ACCELERATION = 20
 
-# per timeunit
-MAX_DIRECTION_CHANGE = 15 
-# per timeunit
+# degrees per timeunit
+# normal value 15, set this to 360 to get instant turns
+MAX_DIRECTION_CHANGE = 360 #15 
+# cannon shell speed per timeunit
 SHELL_SPEED = 1000
 
-#
-MAX_SHELLS_IN_AIR = 3
+# number of shells in air per player (default 3)
+MAX_SHELLS_IN_AIR = 1
 
-#
+# max scan resolution +-
 MAX_SCAN_SPREAD = 10
 
+# max damage that a robot can sustain
 MAX_DAMAGE = 100
 
 # relative_speed divisor for collision with robot
@@ -110,54 +112,9 @@ Computes amount of degrees that is needed to add direction to get target_directi
         return diff + 360
 
 def direction_of_vector(vector):
-	"""
-Returns direction (in float degrees) for a vector.
-
->>> direction_of_vector([1,0])
-0
->>> direction_of_vector([0,1])
-90
->>> direction_of_vector([-1,0])
-180
->>> direction_of_vector([0,-1])
-270
->>> direction_of_vector([1,1])
-45.0
->>> direction_of_vector([-1,1])
-135.0
->>> direction_of_vector([-1,-1])
-225.0
->>> direction_of_vector([1,-1])
-315.0
-
-	"""
-	x = vector[0]
-	y = vector[1]
-	# first accurate cardinal directions
-	if y == 0:
-		if x < 0:
-			return 180
-		else:
-			return 0
-	if x == 0:
-		if y < 0:
-			return 270
-		else:
-			return 90
-	
-	value = degrees(atan( float(y)/x ))
-	
-	if y > 0:
-		if x > 0:
-			return value
-		else:
-			return 90 - value
-	else:
-		if x > 0:
-			return 360 + value
-		else:
-			return 180 + value
-	
+    x = vector[0]
+    y = vector[1]
+    return degrees(atan2(y, x))
 
 def _test():
     import doctest
