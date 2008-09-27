@@ -9,17 +9,20 @@ class Player:
         self.robot = robot
         self.controller = controller
         robot.player = self
+        self.active = True
 
 class Simulator:
     def __init__(self, players, visualizer = None):
         """Initialized Simulator"""
         self.players = players
+        self.active_players = list(players)
         self.shells = []
         self.exploding_shells = []
         self.logger = logging.getLogger('SIMULATOR')
         self.logger.info("initialized")
         self.order_results = {}
         self.visualizer = visualizer
+        self.timestep_count = 0
         
     def start(self):
         self.greenlet = greenlet(self.simulate)
@@ -33,10 +36,11 @@ class Simulator:
         
         
     def simulate(self):
-        while( len(self.players) > 1 and not self.stopping()):
+        while( len(self.active_players) > 1 and not self.stopping()):
             self.timestep()
             
     def timestep(self):
+        self.timestep_count += 1
         # orders for current timestep
         orders = {}
         
@@ -49,7 +53,7 @@ class Simulator:
 
 
         # get orders for robots
-        for player in self.players:
+        for player in self.active_players:
             # first thing in results is robot's status
             prev_results = [ player.robot.status() ]
             if self.order_results.has_key(player):
@@ -60,23 +64,44 @@ class Simulator:
                 orders[player] = new_order
 
         # handle flying shells
-        finished_shells = []        
-        for shell in self.shells:
-            if shell.move():
-                shell.explode()
-                self.exploding_shells.append(shell)
-                self.shells.remove(shell)
+        self.move_shells()
  
         # execute orders
-        for player in self.players:
+        for player in self.active_players:
             robot = player.robot
             if orders.has_key(player):
                 result = self.execute_order(robot, orders[player])
                 self.order_results[player] = result
             robot.move()
 
+    def move_shells(self):
+        """
+        Move flying shells and handle explosions.
+        """
+        finished_shells = []        
+        for shell in self.shells:
+            if shell.move():
+                shell.explode()
+                self.exploding_shells.append(shell)
+                self.shells.remove(shell)
 
-
+        for shell in self.exploding_shells:
+            for player in self.active_players:
+                robot = player.robot
+                distance = shell.distance_to(robot.location)
+                damage = 0
+                for blast in BLAST_DAMAGE:
+                    if distance > blast[0]:
+                        break;
+                    damage = blast[1]
+                
+                robot.damage += damage
+                    
+                if robot.damage > MAX_DAMAGE:
+                    # robot died
+                    player.active = False
+                    self.active_players.remove(player)
+                    self.logger.info("%s destroyed at %d" % (robot.name, self.timestep_count))
     
     def execute_order(self, robot, order):
         """
@@ -111,7 +136,7 @@ class Simulator:
 
     def scan_order(self, current_robot, scan_direction, spread):
         shortest_distance = None
-        for player in self.players:
+        for player in self.active_players:
             robot = player.robot
             if current_robot == robot:
                 continue
