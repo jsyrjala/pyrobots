@@ -27,6 +27,7 @@ class PyGameVisualizer(Visualizer):
     
     def draw(self):
         self.draw_background()
+        self.draw_meters()
         self.draw_explosions()
         self.draw_robots()
         self.draw_shells()
@@ -39,7 +40,16 @@ class PyGameVisualizer(Visualizer):
 
         rect = [self.offset, self.offset, self.screen_width - 2*self.offset, self.screen_height - 2*self.offset]
         pygame.draw.rect(self.screen, [255,255,255], rect, 1)
-        
+    
+    def draw_meters(self):
+        y = 6
+        for player in self.sim.players:
+            y += 4
+            robot = player.robot
+            value = (self.screen_width - 2*self.offset) * min(MAX_DAMAGE,robot.damage) / MAX_DAMAGE
+            rect = [self.offset, y, value, 2]
+            pygame.draw.rect(self.screen, player.color, rect)
+    
     def draw_robots(self):
         
         for player in self.sim.players:
@@ -84,12 +94,18 @@ if __name__ == '__main__':
         return player
         
     vis = PyGameVisualizer()
-    pl0 = create_player("dummy", Controller, [255,255,255] )
-    pl1 = create_player("cylon", Cylon, [255,255,255] )
-    pl2 = create_player("tracer", Tracker, [40, 255, 255] )
-    pl3 = create_player("sniper", Sniper, [255, 0, 0] )
+    dummy1 = create_player("dummy1", Controller, [255,255,255] )
+    dummy2 = create_player("dummy2", Controller, [255,255,255] )
+    cylon1 = create_player("cylon1", Cylon, [255,255,255] )
     
-    players = [pl1, pl2, pl3]
+    tracer1 = create_player("tracer1", Tracker, [40, 255, 255] )
+    tracer2 = create_player("tracer2", Tracker, [140, 255, 25] )
+    
+    sniper1 = create_player("sniper1", Sniper, [255, 0, 0] )
+    sniper2 = create_player("sniper2", Sniper, [255, 255, 0] )
+    
+    players = [dummy1, cylon1, tracer1, sniper1, sniper2]
+    #players = [dummy1, dummy2, sniper1]
     sim = Simulator(players, vis)
     
     sim.start()
