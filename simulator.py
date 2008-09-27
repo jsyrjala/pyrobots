@@ -160,7 +160,10 @@ class Simulator:
 
     def stopping(self):
         # TODO kill game after N steps if no resolution before
-        pass
+        if self.timestep_count >= 30000:
+            self.logger.info("Stopping via timeout at %d " % self.timestep_count)
+            return True
+        
 
 
 if __name__ == '__main__':
