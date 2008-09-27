@@ -108,8 +108,7 @@ Computes amount of degrees that is needed to add direction to get target_directi
         return diff
     if low < norm and low < high:
         return diff -360
-    if high < norm and high < low:
-        return diff + 360
+    return diff + 360
 
 def direction_of_vector(vector):
     x = vector[0]
