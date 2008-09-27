@@ -1,11 +1,15 @@
 from visualizer import Visualizer
 from constants import *
 from simulator import *
+from random import randint
+
+import sys, pygame
+from pygame.locals import *
 
 from controllers.cylon import * 
 from controllers.tracker import * 
-import sys, pygame
-from pygame.locals import *
+from controllers.sniper import * 
+
 
 class PyGameVisualizer(Visualizer):
     def __init__(self):
@@ -63,15 +67,20 @@ class PyGameVisualizer(Visualizer):
     def convert_height(self, height):
         y = float(height) * self.height / ARENA_MAX_LENGTH
         return int(y)
-        
+
 if __name__ == '__main__':
+    def create_player(name, controller):
+        robot = Robot([ randint(1000, 9000), randint(1000, 9000) ], 'R2')
+        robot.direction = randint(0,359)
+        player = Player(robot, controller())
+        return player
+        
     vis = PyGameVisualizer()
     
-    r1 = Robot([5000,5000], 'R1')
-    r2 = Robot([5000,5000], 'R2')
-    pl1 = Player(r1, Cylon() )
-    pl2 = Player(r2, Tracker() )
-    sim = Simulator([pl1, pl2], vis)
+    pl1 = create_player("cylon", Cylon)
+    pl2 = create_player("tracer", Tracker)
+    pl3 = create_player("sniper", Sniper)
     
-    #sim = Simulator([pl2, pl2], vis)
+    sim = Simulator([pl1, pl2, pl3], vis)
+    
     sim.start()
