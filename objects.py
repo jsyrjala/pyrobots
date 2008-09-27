@@ -58,6 +58,7 @@ class Shell(Object):
         self.speed = SHELL_SPEED
         self.radius = SHELL_RADIUS
         self.shooter = shooter
+        self.exploded = False
 
     def move(self):
         """
@@ -73,6 +74,7 @@ class Shell(Object):
         """
         Called when shell explodes.
         """
+        self.exploded = True
         self.shooter.shells_in_air -= 1
 
 class Robot(Object):

@@ -27,6 +27,7 @@ class PyGameVisualizer(Visualizer):
     
     def draw(self):
         self.draw_background()
+        self.draw_explosions()
         self.draw_robots()
         self.draw_shells()
         pygame.display.flip()
@@ -47,9 +48,13 @@ class PyGameVisualizer(Visualizer):
             self.draw_circle(self.convert_location(robot.location), self.convert_width(robot.radius), color )
             
     def draw_shells(self):
-        color = [250, 250, 250]
         for shell in self.sim.shells:
-            self.draw_circle(self.convert_location(shell.location), self.convert_width(shell.radius), color )
+            self.draw_circle(self.convert_location(shell.location), 1, shell.shooter.player.color )
+
+    def draw_explosions(self):
+        for shell in self.sim.exploding_shells:
+            self.draw_circle(self.convert_location(shell.location), self.convert_width(BLAST_MIN_DAMAGE_RADIUS), shell.shooter.player.color )
+        
 
     def draw_circle(self, position, radius, color):
         pygame.draw.circle(self.screen, color, position, radius )
