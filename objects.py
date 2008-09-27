@@ -137,26 +137,52 @@ class Robot(Object):
         else:
             # change self.direction towards target_direction
             # TODO turn at no more than MAX_DIRECTION_CHANGE degrees
+            # TODO this should be true only if actual direction changes
             direction_changed = True
             pass
             
-        # TODO if going too fast for turning, brake until turning is allowed, turn and go back to target speed.
         return direction_changed
         
     def move(self):
-        if not self.can_turn():
-            # can't turn now, going too fast
-            pass
-        else:
-            # change self.direction towards target_direction
-            # TODO turn at no more than MAX_DIRECTION_CHANGE degrees
-            self.direction = self.target_direction
-            pass
+        right_direction = False
         
+        # speed requested, or needed for turning
+        needed_speed = self.target_speed
+        
+        direction_diff = 0
+        if self.direction == self.target_direction:
+            # no need to turn
+            pass
+        elif self.can_turn():
+            # change self.direction towards target_direction
+            angle_diff = angle_difference(self.direction, self.target_direction)
+            
+            if angle_diff < -MAX_DIRECTION_CHANGE:
+                angle_diff = -MAX_DIRECTION_CHANGE
+            if angle_diff > MAX_DIRECTION_CHANGE:
+                angle_diff = MAX_DIRECTION_CHANGE
+                
+            self.direction = int(self.direction + angle_diff) % 360
+        else:
+            # need to turn but going too fast => slow down
+            needed_speed = MAX_TURN_SPEED
+        
+        speed_diff = needed_speed - self.speed
+        
+        if math.fabs(speed_diff) > MAX_ACCELERATION:
+            if speed_diff < 0:
+                speed_diff = -MAX_ACCELERATION
+            elif speed_diff > 0:
+                speed_diff = MAX_ACCELERATION
+            
         # change self.speed towards target_speed
         # TODO accelerate/brake no more than MAX_ACCELERATION
-        self.speed = self.target_speed
+        self.speed += speed_diff
         Object.move(self)
+        if self.speed != self.target_speed:
+            pass
+            #print (speed_diff, self.speed, self.target_speed, self.name, direction_diff) 
+            
     
     def status(self):
         """

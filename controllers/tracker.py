@@ -23,7 +23,8 @@ class Tracker(Controller):
         hadfix = False
         
         # start moving immediately
-        self.drive(dir, 50)
+        SPEED = MAX_FORWARD_SPEED
+        self.drive(dir, SPEED)
         
         while True:
             tdir = dir
@@ -53,7 +54,7 @@ class Tracker(Controller):
             
             if not speed or dir != tdir:
                 dir = tdir
-                self.drive(dir, 50)
+                self.drive(dir, SPEED)
 
             range = self.scan(scan_dir, 10)
             if range:

@@ -84,6 +84,10 @@ Computes amount of degrees that is needed to add direction to get target_directi
 0
 >>> angle_difference(1, 10)
 9
+>>> angle_difference(0, 90)
+90
+>>> angle_difference(90, 0)
+-90
 >>> angle_difference(19, 5)
 -14
 >>> angle_difference(1,359)

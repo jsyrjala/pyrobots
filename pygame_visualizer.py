@@ -72,18 +72,19 @@ class PyGameVisualizer(Visualizer):
 
 if __name__ == '__main__':
     def create_player(name, controller, color):
-        robot = Robot([ randint(1000, 9000), randint(1000, 9000) ], 'R2')
+        robot = Robot([ randint(1000, 9000), randint(1000, 9000) ], name)
         robot.direction = randint(0,359)
         player = Player(robot, controller())
         player.color = color
         return player
         
     vis = PyGameVisualizer()
-    
+    pl0 = create_player("dummy", Controller, [255,255,255] )
     pl1 = create_player("cylon", Cylon, [255,255,255] )
     pl2 = create_player("tracer", Tracker, [40, 255, 255] )
     pl3 = create_player("sniper", Sniper, [255, 0, 0] )
     
-    sim = Simulator([pl1, pl2, pl3], vis)
+    players = [pl1, pl2, pl3]
+    sim = Simulator(players, vis)
     
     sim.start()

@@ -22,7 +22,7 @@ class Cylon(Controller):
 
         sc = 0;
         sd = 1;
-        SPEED = 49
+        SPEED = MAX_FORWARD_SPEED
         self.drive(dir, SPEED);
         location, health, speed, direction = self.status()
         
