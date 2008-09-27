@@ -28,7 +28,7 @@ class Cylon(Controller):
         
         
         dist = hypot(x - location[0], y - location[1]);
-        while fabs(speed) > 0 and dist > 200 :
+        while fabs(speed) > 0 and dist > 300 :
             location, health, speed, direction = self.status()
             dist = hypot(x - location[0], y - location[1]);
                         
