@@ -10,6 +10,8 @@ MAX_BACKWARD_SPEED = -75
 # max speed when turning allowed
 MAX_TURN_SPEED = 50
 
+MAX_CANNON_RANGE = 7000
+
 # speed change per time unit^2
 MAX_ACCELERATION = 20
 
