@@ -102,6 +102,13 @@ class Robot(Object):
         return math.fabs(self.speed) <= MAX_TURN_SPEED
 
     def shoot(self, direction, distance):
+        if distance > MAX_CANNON_RANGE:
+            distance = MAX_CANNON_RANGE
+        if distance < 0:
+            distance = 0
+        distance = int(distance + 0.5)
+        direction = int(direction + 0.5) % 360
+        
         target = vector(self.location, direction, distance)
         self.shells_in_air += 1
         return Shell(self, [self.location[0], self.location[1]], direction, target)
@@ -115,6 +122,7 @@ class Robot(Object):
         if speed > MAX_FORWARD_SPEED:
             speed = MAX_BACKWARD_SPEED
         
+        speed = int(speed + 0.5)
         direction = int(direction + 0.5) % 360
         self.target_speed = speed
         self.target_direction = direction
