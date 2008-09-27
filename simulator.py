@@ -29,7 +29,8 @@ class Simulator:
         for player in self.players:
             player.greenlet = greenlet(player.controller.__init_event_loop__)
             player.controller.main_greenlet = self.greenlet
-        
+
+        self.start_time = time.clock()
         while True:
             value = self.greenlet.switch()
             # a controller greenlet has died due a bug
@@ -48,6 +49,8 @@ class Simulator:
             
     def timestep(self):
         self.timestep_count += 1
+        if self.timestep_count % 1000 == 0:
+            self.logger.info("Timestep %d in %0.1f seconds" % (self.timestep_count, time.clock() - self.start_time))
         # orders for current timestep
         orders = {}
         
