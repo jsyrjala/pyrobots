@@ -27,7 +27,7 @@ class Tracker(Controller):
         
         while True:
             tdir = dir
-            location, health, speed, direction = self.get_status()
+            location, health, speed, direction = self.status()
             cx, cy = location
             
             if cx > 10000 - self.BORDER:
@@ -65,6 +65,7 @@ class Tracker(Controller):
             else: 
                 scan_dir -= 20
 
+# TODO
  #                 // if speed() == 0,    restart the drive unit...
  #     // if dir != tdir,     we need to change direction...
  #     if (!speed() || dir != tdir)
