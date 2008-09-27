@@ -10,21 +10,15 @@ class Controller:
     SCAN  = 2
     DRIVE = 3
     WAIT  = 4
-    
-    
 
     def __init__(self):
-        self.logger = logging.getLogger('CTRL')
         self.status = None
 
     def __init_event_loop__(self, status):
         """Called by simulator. Do not use!"""
-        self.logger.debug("initializing")
         self.status = status.pop(0)
         self.execute()
-        self.logger.debug("finished")
-        
-        
+
     def __set_status__(self, results):
         self.status = results.pop(0)
         return results
@@ -33,7 +27,7 @@ class Controller:
         """
         Shoots the cannon to given direction and distance.
         There may be up to 3 cannon shells in the air at same time.
-        Return True, if shooting was succesful, false otherwise.
+        Return True, if shooting was succesful, False otherwise.
         
         direction is in degrees, distance is in pixels (integers only).
         
@@ -63,6 +57,8 @@ class Controller:
         Maximum speed where turning is allowed is MAX_TURN_SPEED pixels/time-unit. 
         If speed is too high for turning, robot will slow down, turn and go back to its target speed.
         
+        Returns True if direction was changed, False if direction was not changed due to high speed.
+        
         direction is in degrees, speed is in pixels/time-unit (integers only).
         """
         results = self.main_greenlet.switch( [self.DRIVE, [direction, speed]] )
@@ -70,23 +66,60 @@ class Controller:
 
     def wait(self):
         """
-        Skips turn.
+        Skips a turn.
         """
         results = self.main_greenlet.switch( [self.WAIT] )
         return self.__set_status__(results)
 
     def get_status(self):
         """
-        Returns current status of robot
+        Returns current status of robot in format
         [[x_coordinate, y_coordinate], health, speed, direction]
         """
         return self.status
 
+    def speed(self):
+        """
+        Returns current speed of the robot. Speed may not always be same as in last drive() 
+        command because of acceleration and collisions.
+        """
+        return self.status[2]
+
+    def direction(self):
+        """
+        Returns current direction of robot in degrees. Direction may not always be same as in last drive() 
+        command because of turning speed.
+        """
+        return self.status[3]
+    
+    def location(self):
+        """
+        Returns robot's current location as [x, y].
+        """
+        return self.status[0]
+
+    def x_loc(self):
+        """
+        Returns current x coordinate of the robot.
+        """
+        self.status[0][0]
+
+    def y_loc(self):
+        """
+        Returns current y coordinate of the robot.
+        """
+        self.status[0][1]
+
+    def damage(self):
+        """
+        Returns current damage of the robot. 0 = no damage, 100 = destroyed.
+        """
+        self.status[1]
         
     def execute(self):
         """
         Entry point of controller. Override this in subclass. 
-        Do not exit from this method, since it counts as surrender ;-) 
+        Do not exit or throw execptions from this method, since that counts as surrender ;-) 
         Make an infinite loop and call methods provided by this class.
         
         Calling shoot, drive, scan or wait finishes turn for current timeslice. Calling status does not affect timeslice.
@@ -95,16 +128,3 @@ class Controller:
         # default behaviour is do nothing
         while True:
             self.wait()
-
-
-class Shooter(Controller):
-    def execute(self):
-        while True:
-            self.shoot(rand_int(0,360) , rand_int(100, 5000) )
-        
-class Driver(Controller):
-    def execute(self):
-        while True:
-            self.drive(0, 10)
-            
-            location, health, speed, direction = self.get_status()
