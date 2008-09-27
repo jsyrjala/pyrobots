@@ -1,4 +1,4 @@
-from math import sqrt, pi, cos, sin, floor, radians, degrees, atan
+from math import sqrt, pi, cos, sin, floor, radians, degrees, atan, fabs
 from random import randint
 
 ARENA_MAX_WIDTH = 10000
@@ -75,7 +75,34 @@ def direction(location, target):
 	
 	vector = [target[0] - location[0], target[1] - location[1]]
 	return direction_of_vector(vector)
-	
+
+def angle_difference(direction, target_direction):
+    """
+Computes amount of degrees that is needed to add direction to get target_direction.
+
+>>> angle_difference(10, 10)
+0
+>>> angle_difference(1, 10)
+9
+>>> angle_difference(19, 5)
+-14
+>>> angle_difference(1,359)
+-2
+>>> angle_difference(350, 10)
+20
+    """
+    diff = target_direction - direction
+    norm = fabs(diff)
+    low = fabs(diff - 360)
+    high = fabs(diff + 360)
+
+    if norm < low and norm < high:
+        return diff
+    if low < norm and low < high:
+        return diff -360
+    if high < norm and high < low:
+        return diff + 360
+
 def direction_of_vector(vector):
 	"""
 Returns direction (in float degrees) for a vector.
