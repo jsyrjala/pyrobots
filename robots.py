@@ -44,11 +44,11 @@ def create_color(type, player_no):
     return [randint(0, 255), randint(0, 255), randint(0, 255)]
     
 def create_controller(type):
-    found_type = filter(lambda(file): file == type, dir(controllers))
-    if not found_type:
-        print("not found %s" % type)
-        sys.exit(1)
-    exec "from controllers." + type +" import *" in globals()
+
+    try:
+        exec "from controllers." + type +" import *" in globals()
+    except ImportError:
+        print "Module %s not found" % type
     
     class_name = type.capitalize()
     
