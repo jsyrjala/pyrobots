@@ -91,7 +91,10 @@ class Controller:
         
         Calling shoot, drive, scan or wait finishes turn for current timeslice. Calling status does not affect timeslice.
         """
-        pass
+        
+        # default behaviour is do nothing
+        while True:
+            self.wait()
 
 
 class Shooter(Controller):
