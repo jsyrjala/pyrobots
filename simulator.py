@@ -24,8 +24,11 @@ class Simulator:
         for player in self.players:
             player.greenlet = greenlet(player.controller.__init_event_loop__)
             player.controller.main_greenlet = self.greenlet
-        self.greenlet.switch()
-            
+        
+        while True:
+            self.greenlet.switch()
+            # a controller greenlet has died due a bug
+        
         
     def simulate(self):
         while( len(self.players) > 1 and not self.stopping()):
