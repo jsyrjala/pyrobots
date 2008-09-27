@@ -31,10 +31,17 @@ class Simulator:
             player.controller.main_greenlet = self.greenlet
         
         while True:
-            self.greenlet.switch()
+            value = self.greenlet.switch()
             # a controller greenlet has died due a bug
-        
-        
+            if len(self.active_players) < 2:
+                break;
+
+        self.logger.info("Winner is %s" % self.active_players[0].robot.name)
+        while True:
+            if self.visualizer:
+                self.visualizer.visualize(self)
+            time.sleep(0.2)
+
     def simulate(self):
         while( len(self.active_players) > 1 and not self.stopping()):
             self.timestep()
