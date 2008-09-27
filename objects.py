@@ -88,7 +88,7 @@ class Robot(Object):
         self.shells_in_air = 0
         self.target_direction = 0
         self.target_speed = 0
-        self.health = MAX_HEALTH
+        self.damage = 0
 
         self.logger = logging.getLogger('ROBOT')
         self.logger.debug("Robot " + name + " initialized at " + str(location))
@@ -189,9 +189,9 @@ class Robot(Object):
     def status(self):
         """
         Returns robots status.
-        [[x_coordinate, y_coordinate], health, speed, direction]
+        [[x_coordinate, y_coordinate], damage, speed, direction]
         """
-        return [[self.location[0], self.location[1]], self.health, self.speed, self.direction]
+        return [[self.location[0], self.location[1]], self.damage, self.speed, self.direction]
         
 if __name__ == '__main__':
     r = Robot([1000,1000], 'doo')

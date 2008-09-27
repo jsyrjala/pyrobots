@@ -26,7 +26,7 @@ MAX_SHELLS_IN_AIR = 3
 #
 MAX_SCAN_SPREAD = 10
 
-MAX_HEALTH = 100
+MAX_DAMAGE = 100
 
 # relative_speed divisor for collision with robot
 robot_collision_damage_divisor = 25

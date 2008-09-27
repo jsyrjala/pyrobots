@@ -74,7 +74,7 @@ class Controller:
     def status(self):
         """
         Returns current status of robot in format
-        [[x_coordinate, y_coordinate], health, speed, direction]
+        [[x_coordinate, y_coordinate], damage, speed, direction]
         """
         return self.__status__
 

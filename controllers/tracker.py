@@ -33,7 +33,7 @@ class Tracker(Controller):
         
         while True:
             tdir = dir
-            location, health, speed, direction = self.status()
+            location, damage, speed, direction = self.status()
             cx, cy = location
             
             # IMPROVE direction comments are not corrent?

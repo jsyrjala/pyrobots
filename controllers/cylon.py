@@ -15,7 +15,7 @@ class Cylon(Controller):
     def goto(self, x, y):
         status = self.status()
         
-        location, health, speed, direction = self.status()
+        location, damage, speed, direction = self.status()
         dir = int(degrees(atan2(y - location[1], x - location[0]))) % 360
         
         orig_dist = hypot(x - location[0], y - location[1]);
@@ -24,25 +24,25 @@ class Cylon(Controller):
         sd = 1;
         SPEED = MAX_FORWARD_SPEED
         self.drive(dir, SPEED);
-        location, health, speed, direction = self.status()
+        location, damage, speed, direction = self.status()
         
         
         dist = hypot(x - location[0], y - location[1]);
         while fabs(speed) > 0 and dist > 300 :
-            location, health, speed, direction = self.status()
+            location, damage, speed, direction = self.status()
             dist = hypot(x - location[0], y - location[1]);
                         
             if fabs(sc) == 45:
                 sd *= -1
             sc += 3*sd
             range = self.scan(dir + sc, 5)
-            location, health, speed, direction = self.status()
+            location, damage, speed, direction = self.status()
             
             if range > 200 and range < 7000:
                 self.shoot(dir + sc, range)
                 
             # point robot towards target if needed
-            location, health, speed, direction = self.status()
+            location, damage, speed, direction = self.status()
             tdir = int(degrees(atan2(y - location[1], x - location[0]))) % 360
             
             if tdir != dir:
@@ -53,5 +53,5 @@ class Cylon(Controller):
         self.drive(dir, 0)
         
         while fabs(speed) > 0:
-            location, health, speed, direction = self.status()
+            location, damage, speed, direction = self.status()
             self.wait()
