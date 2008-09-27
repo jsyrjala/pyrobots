@@ -8,12 +8,14 @@ class Player:
     def __init__(self, robot, controller):
         self.robot = robot
         self.controller = controller
+        robot.player = self
 
 class Simulator:
     def __init__(self, players, visualizer = None):
         """Initialized Simulator"""
         self.players = players
         self.shells = []
+        self.exploding_shells = []
         self.logger = logging.getLogger('SIMULATOR')
         self.logger.info("initialized")
         self.order_results = {}
@@ -37,10 +39,15 @@ class Simulator:
     def timestep(self):
         # orders for current timestep
         orders = {}
+        
+        
         # results for orders in previous timestep
         if self.visualizer:
             self.visualizer.visualize(self)
-            
+
+        self.exploding_shells = []
+
+
         # get orders for robots
         for player in self.players:
             # first thing in results is robot's status
@@ -57,6 +64,7 @@ class Simulator:
         for shell in self.shells:
             if shell.move():
                 shell.explode()
+                self.exploding_shells.append(shell)
                 self.shells.remove(shell)
  
         # execute orders
@@ -79,7 +87,6 @@ class Simulator:
             return self.shoot_order(robot, order[1][0], order[1][1])
         elif command == Controller.SCAN:
             return self.scan_order(robot, order[1][0], order[1][1])
-
         elif command == Controller.DRIVE:
             return self.drive_order(robot, order[1][0], order[1][1])
         elif command == Controller.WAIT:
@@ -102,8 +109,21 @@ class Simulator:
         return robot.drive(direction, speed)
 
 
-    def scan_order(self, robot, direction, speed):
-        pass
+    def scan_order(self, current_robot, scan_direction, spread):
+        shortest_distance = None
+        for player in self.players:
+            robot = player.robot
+            if current_robot == robot:
+                continue
+            
+            direction_vector = direction(current_robot.location, robot.location)
+            if fabs(angle_difference(direction_vector, scan_direction)) > spread:
+                continue
+            
+            dist = current_robot.distance_to(robot.location)
+            if not shortest_distance or shortest_distance > dist:
+                shortest_distance = dist
+        return shortest_distance
 
 
     def stopping(self):
