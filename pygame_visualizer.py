@@ -9,6 +9,7 @@ from pygame.locals import *
 from controllers.cylon import * 
 from controllers.tracker import * 
 from controllers.sniper import * 
+from controllers.cspotrun import *
 
 
 class PyGameVisualizer(Visualizer):
@@ -19,7 +20,7 @@ class PyGameVisualizer(Visualizer):
         pygame.init()
  
         self.screen = pygame.display.set_mode(self.screen_size)
-        
+        pygame.display.set_caption("PyRobots")
     def visualize(self, sim):
         self.sim = sim
         self.handle_events()
@@ -104,8 +105,12 @@ if __name__ == '__main__':
     sniper1 = create_player("sniper1", Sniper, [255, 0, 0] )
     sniper2 = create_player("sniper2", Sniper, [255, 255, 0] )
     
-    players = [dummy1, cylon1, tracer1, sniper1, sniper2]
-    #players = [dummy1, dummy2, sniper1]
+    cspotrun = create_player("cspotrun", Cspotrun, [100, 100, 255] )
+    
+    dummy1.robot.location = [200, 9500]
+    dummy2.robot.location = [9500, 9500]
+    players = [dummy1, cylon1, tracer1, sniper1, sniper2, cspotrun]
+    #players = [dummy1,  cspotrun]
     sim = Simulator(players, vis)
     
     sim.start()
