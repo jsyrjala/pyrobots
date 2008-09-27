@@ -31,8 +31,9 @@ class Tracker(Controller):
             location, health, speed, direction = self.status()
             cx, cy = location
             
-            if cx > 10000 - self.BORDER:
-                if cy < 10000 - self.BORDER:
+            # IMPROVE direction comments are not corrent?
+            if cx > ARENA_MAX_WIDTH - self.BORDER:
+                if cy < ARENA_MAX_LENGTH - self.BORDER:
                     # near east wall
                     tdir = 90
                 else:
@@ -45,42 +46,31 @@ class Tracker(Controller):
                 else:
                     # near west wall
                     tdir = 270
-            elif cy > 10000 - self.BORDER:
+            elif cy > ARENA_MAX_LENGTH - self.BORDER:
                 # near north wall
                 tdir = 180
             elif cy < self.BORDER:
                 # near south wall
                 tdir = 0
             
+            # if  speed = 0, restart drive unit
+            # if dir  != dir need to change direction
             if not speed or dir != tdir:
                 dir = tdir
                 self.drive(dir, SPEED)
 
+            # scan for target
             range = self.scan(scan_dir, 10)
             if range:
+                # found one, start shooting it
                 self.cannon(scan_dir, range)
+                # remember that we saw a target
                 hadfix = True
             elif hadfix:
+                # had target but lost it, back up the scan
                 scan_dir += 40
+                # forget target
                 hadfix = False
             else: 
+                # no target found, increment target
                 scan_dir -= 20
-
-# TODO
- #                 // if speed() == 0,    restart the drive unit...
- #     // if dir != tdir,     we need to change direction...
- #     if (!speed() || dir != tdir)
- #        drive(dir=tdir,100);
-
-#      if ((range=scan(sdir,10))) {   // scan for a target...
-#         shoot(sdir,range);          //   got one.  shoot it!
-#        hadfix=1;                   //   remember we saw a target
-#      }
-#      else if (hadfix) {             //   did we lose a target?
-#         sdir += 40;                 //        back up the scan
-#         hadfix=0;                   //        forget we had a target
-#      }
-#      else
-#         sdir -= 20;                 //   increment the scan
-
-            
