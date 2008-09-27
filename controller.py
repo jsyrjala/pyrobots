@@ -34,7 +34,7 @@ class Controller:
         TODO speed affects accuracy?
         """
         results = self.main_greenlet.switch( [self.SHOOT, [direction, distance]] )
-        return self.__set_status__(results)
+        return self.__set_status__(results).pop(0)
 
     def scan(self, direction, spread):
         """
@@ -46,7 +46,7 @@ class Controller:
         direction and spread are in degrees (integers only).
         """
         results = self.main_greenlet.switch( [self.SCAN, [direction, spread]] )
-        return self.__set_status__(results)
+        return self.__set_status__(results).pop(0)
 
     def drive(self, direction, speed):
         """
@@ -62,7 +62,7 @@ class Controller:
         direction is in degrees, speed is in pixels/time-unit (integers only).
         """
         results = self.main_greenlet.switch( [self.DRIVE, [direction, speed]] )
-        return self.__set_status__(results)
+        return self.__set_status__(results).pop(0)
 
     def wait(self):
         """
