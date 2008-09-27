@@ -33,7 +33,6 @@ class Sniper(Controller):
             while scan_dir < self.scan_start + 90:
                 # look at direction
                 range = self.scan(scan_dir, 1)
-
                 if range and range <= MAX_CANNON_RANGE:
                     # found someone to shoot at, keep shooting while it is in our sight
                     while range:
@@ -92,7 +91,7 @@ class Sniper(Controller):
         direction = self.plot_course(self.corner_location)
         self.drive(direction, MAX_ACCELERATION);
         
-        while(self.distance(self.location(), self.corner_location) > 100 and self.speed() > 0):
+        while(self.distance(self.location(), self.corner_location) > 200 and self.speed() > 0):
             self.wait()
         
         # stop engine and point robot to arena center for faster turning to next corner
