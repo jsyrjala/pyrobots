@@ -3,6 +3,11 @@ from random import *
 from math import *
 
 class Tracker(Controller):
+    """
+    Taken from c++robots.
+    
+    Robot drives rectangular path about 2000 units from arena walls as fast as possible and scans for targets.
+    """
     BORDER = 2000
     def __init__(self):
         Controller.__init__(self)
@@ -72,5 +77,5 @@ class Tracker(Controller):
                 # forget target
                 hadfix = False
             else: 
-                # no target found, increment target
+                # no target found, increment scan
                 scan_dir -= 20
