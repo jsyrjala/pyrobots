@@ -30,7 +30,7 @@ def main():
 def create_player(type, player_no):
     controller = create_controller(type)
     robot = Robot([ randint(1000, 9000), randint(1000, 9000) ], type)
-    
+    robot.target_direction = robot.direction = randint(0,360)
     player = Player(robot, controller)
     player.color = create_color(type, player_no)
     return player
