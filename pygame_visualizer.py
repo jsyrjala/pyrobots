@@ -52,11 +52,16 @@ class PyGameVisualizer(Visualizer):
             pygame.draw.rect(self.screen, player.color, rect)
     
     def draw_robots(self):
-        
+        """
+        Draws the robots as simple filled circle with directional pointer.
+        """
         for player in self.sim.players:
             robot = player.robot
             color = player.color
-            self.draw_circle(self.convert_location(robot.location), self.convert_width(robot.radius), color )
+            position = self.convert_location(robot.location)
+            radius = self.convert_width(robot.radius)
+            self.draw_circle(position, radius, color )
+            pygame.draw.line(self.screen, [255,255,255], position, vector(position, robot.direction, radius))
             
     def draw_shells(self):
         for shell in self.sim.shells:
