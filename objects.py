@@ -13,17 +13,24 @@ class Object:
         self.location = location
         self.radius = 0
 
-    def collides_with_wall(self):
+    def collides_with_walls(self):
         """
-        Returns true if current object collides with walls. Takes object's radius in consideration.
+        Returns list of walls if current object collides with walls. Takes object's radius in consideration.
+        1 = north wall, 2 = east wall, 3 = south wall, 4 = west wall.
+        For exaple [1,2] => collides with both eats and north walls (is in ne corner)
         """
-        x = location[0]
-        if x < self.radius or x > (ARENA_MAX_WIDTH - self.radius):
-            return True
-        y = location[1]
-        if y < self.radius or y > (ARENA_MAX_LENGTH - self.radius):
-            return True
-        return False
+        walls = []
+        x = self.location[0]
+        y = self.location[1]
+        if x < self.radius:
+            walls.append(4)
+        if x > (ARENA_MAX_WIDTH - self.radius):
+            walls.append(2)
+        if y < self.radius:
+            walls.append(1)
+        if y > (ARENA_MAX_LENGTH - self.radius):
+            walls.append(3)
+        return walls;
 
 
     def distance_to(self, location):
@@ -138,7 +145,6 @@ class Robot(Object):
             pass
         else:
             # change self.direction towards target_direction
-            # TODO turn at no more than MAX_DIRECTION_CHANGE degrees
             # TODO this should be true only if actual direction changes
             direction_changed = True
             pass
@@ -181,10 +187,26 @@ class Robot(Object):
         # TODO accelerate/brake no more than MAX_ACCELERATION
         self.speed += speed_diff
         Object.move(self)
-        if self.speed != self.target_speed:
-            pass
-            #print (speed_diff, self.speed, self.target_speed, self.name, direction_diff) 
-            
+
+        self.handle_collisions()
+    
+    def handle_collisions(self):
+        # check collisions with walls
+        walls = self.collides_with_walls()
+        if walls:
+            collision_damage = int((self.speed / WALL_COLLISION_DAMAGE_DIVISOR  ) + 0.5)
+            self.damage += collision_damage
+            self.speed = 0
+            self.target_speed = 0
+            if 1 in walls:
+                self.location[1] = 0 + self.radius + 1
+            if 2 in walls:
+                self.location[0] = ARENA_MAX_WIDTH - self.radius - 1
+            if 3 in walls:
+                self.location[1] = ARENA_MAX_LENGTH - self.radius - 1
+            if 4 in walls:
+                self.location[0] = 0 + self.radius + 1
+                
     
     def status(self):
         """

@@ -31,9 +31,9 @@ MAX_SCAN_SPREAD = 10
 MAX_DAMAGE = 100
 
 # relative_speed divisor for collision with robot
-robot_collision_damage_divisor = 25
+ROBOT_COLLISION_DAMAGE_DIVISOR = 25.0
 # relative_speed divisor for collision with wall
-wall_collision_damage_divisor = 25
+WALL_COLLISION_DAMAGE_DIVISOR = 25.0
 
 # robot size
 ROBOT_RADIUS = 100
