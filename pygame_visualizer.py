@@ -10,10 +10,10 @@ from controllers.cylon import *
 from controllers.tracker import * 
 from controllers.sniper import * 
 from controllers.cspotrun import *
-
+import time
 
 class PyGameVisualizer(Visualizer):
-    def __init__(self):
+    def __init__(self, frame_delay = 0):
         self.size = self.width, self.height = 500, 500
         self.screen_size = self.screen_width, self.screen_height = 600, 600
         self.offset = 50
@@ -21,10 +21,15 @@ class PyGameVisualizer(Visualizer):
  
         self.screen = pygame.display.set_mode(self.screen_size)
         pygame.display.set_caption("PyRobots")
+        
+        self.frame_delay = frame_delay
+        
     def visualize(self, sim):
         self.sim = sim
         self.handle_events()
         self.draw()
+        if self.frame_delay:
+            time.sleep(self.frame_delay / 1000.0)
     
     def draw(self):
         self.draw_background()
@@ -61,14 +66,21 @@ class PyGameVisualizer(Visualizer):
             position = self.convert_location(robot.location)
             radius = self.convert_width(robot.radius)
             self.draw_circle(position, radius, color )
-            # robot's direction
-            #pygame.draw.line(self.screen, [255,255,255], position, vector(position, robot.direction, radius))
-            self.draw_line(position, robot.direction, radius, [255, 255, 255])
+
             # scanning direction
             if robot.scan_order:
                 pass
-                #pygame.draw.line(self.screen, [255,255,255], position, vector(position, robot.scan_order[0] - robot.scan_order, radius * 2))
-                #pygame.draw.line(self.screen, [255,255,255], position, vector(position, robot.direction, radius * 2))
+                gray = [130, 130, 130]
+                self.draw_line(position, robot.scan_order[0] - robot.scan_order[1], radius*4, gray)
+                self.draw_line(position, robot.scan_order[0] + robot.scan_order[1], radius*4, gray)
+
+            # robot's direction
+            # TODO how to display going backwards
+            dist = radius
+            if robot.speed > 0:
+                dist += (3 * radius) * (robot.speed / float(MAX_FORWARD_SPEED))
+            self.draw_line(position, robot.direction, dist, [255, 255, 255])
+
             
     def draw_shells(self):
         for shell in self.sim.shells:
@@ -82,8 +94,8 @@ class PyGameVisualizer(Visualizer):
     def draw_circle(self, position, radius, color):
         pygame.draw.circle(self.screen, color, position, radius )
 
-    def draw_line(self, start_pos, direction, length, color):
-        pygame.draw.line(self.screen, [255,255,255], position, vector(start_pos, direction, length))        
+    def draw_line(self, position, direction, length, color):
+        pygame.draw.line(self.screen, color, position, vector(position, direction, length))        
 
     def handle_events(self):
         for event in pygame.event.get():

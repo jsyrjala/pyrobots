@@ -92,12 +92,12 @@ class Robot(Object):
 
         self.logger = logging.getLogger('ROBOT')
         self.logger.debug("Robot " + name + " initialized at " + str(location))
-
+        self.scan_order = None
     def can_shoot(self):
         """
         Returns true if robot can shoot
         """
-        return self.shells_in_air <= MAX_SHELLS_IN_AIR
+        return self.shells_in_air < MAX_SHELLS_IN_AIR
 
     def can_turn(self):
         """Returns true if robot can turn at current speed."""

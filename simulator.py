@@ -129,6 +129,7 @@ class Simulator:
         
 
     def get_order(self, player, results):
+        self.clear_order_state(player.robot)
         return player.greenlet.switch(results)
 
     def shoot_order(self, robot, direction, distance):
@@ -144,7 +145,10 @@ class Simulator:
         return robot.drive(direction, speed)
 
 
-    def scan_order(self, current_robot, scan_direction, spread):
+    def scan_order(self, current_robot, scan_direction, resolution):
+        """
+        Scans a given direction with resolution.
+        """
         shortest_distance = None
         for player in self.active_players:
             robot = player.robot
@@ -152,15 +156,20 @@ class Simulator:
                 continue
             
             direction_vector = direction(current_robot.location, robot.location)
-            if fabs(angle_difference(direction_vector, scan_direction)) > spread:
+            if fabs(angle_difference(direction_vector, scan_direction)) > resolution:
                 continue
             
             dist = current_robot.distance_to(robot.location)
             if not shortest_distance or shortest_distance > dist:
                 shortest_distance = dist
+        # save command parameters
+        current_robot.scan_order = [scan_direction, resolution]
+        
         return shortest_distance
 
-
+    def clear_order_state(self, robot):
+        robot.scan_order = None
+        
     def stopping(self):
         # TODO kill game after N steps if no resolution before
         if self.timestep_count >= 30000:

@@ -10,16 +10,20 @@ from simulator import Player, Simulator
 import controllers
 
 def main():
-    opts, args = getopt.getopt(sys.argv[1:], "", ["help"])
-
+    opts, args = getopt.getopt(sys.argv[1:], "f:", ["help"])
+    # f framerate
     players = []
     player_no = 0
+    frame_delay = None
+    for type in opts:
+        if type[0] == '-f':
+            frame_delay = int(type[1])
 
     for type in args:
         players.append(create_player(type, player_no))
         player_no += 1
         
-    vis = PyGameVisualizer()
+    vis = PyGameVisualizer(frame_delay)
     sim = Simulator(players, vis)
     sim.start()
 
