@@ -61,7 +61,14 @@ class PyGameVisualizer(Visualizer):
             position = self.convert_location(robot.location)
             radius = self.convert_width(robot.radius)
             self.draw_circle(position, radius, color )
-            pygame.draw.line(self.screen, [255,255,255], position, vector(position, robot.direction, radius))
+            # robot's direction
+            #pygame.draw.line(self.screen, [255,255,255], position, vector(position, robot.direction, radius))
+            self.draw_line(position, robot.direction, radius, [255, 255, 255])
+            # scanning direction
+            if robot.scan_order:
+                pass
+                #pygame.draw.line(self.screen, [255,255,255], position, vector(position, robot.scan_order[0] - robot.scan_order, radius * 2))
+                #pygame.draw.line(self.screen, [255,255,255], position, vector(position, robot.direction, radius * 2))
             
     def draw_shells(self):
         for shell in self.sim.shells:
@@ -74,6 +81,9 @@ class PyGameVisualizer(Visualizer):
 
     def draw_circle(self, position, radius, color):
         pygame.draw.circle(self.screen, color, position, radius )
+
+    def draw_line(self, start_pos, direction, length, color):
+        pygame.draw.line(self.screen, [255,255,255], position, vector(start_pos, direction, length))        
 
     def handle_events(self):
         for event in pygame.event.get():
