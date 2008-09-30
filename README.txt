@@ -1,18 +1,11 @@
-# methods:
+PyRobots
 
-# distance to nearest robot or nil
-# relative version
-int scan(heading, arc)
-# absolute version (0 is north of arena)
-int scan_abs(direction, arc)
+PyRobots is a game where robot fight in the arena. The twist is that you do 
+not directly control the robots, but instead you write the controlling 
+program (in Python) for the robots.
 
-# shoot to direction, return true if shot
-bool cannon(heading, distance)
-bool cannon_abs(direction, distance)
+PyRobots has been mostly inspired by C++robots (http://www.gamerz.net/c++robots/)
 
-# speed change
-int drive(heading, speed)
-int drive_abs(direction, speed)
-
-# robot status
-[health, direction, speed, location, time] = status()
+Robots fight in a rectangular arena. Robots can move around, and they 
+have radar like scanner for finding other robots. And of course robots
+are armed with a cannon.
